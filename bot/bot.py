@@ -4,6 +4,9 @@ from states import Form
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from database import add_user, get_all_users
+
+
 storage = MemoryStorage()
 
 
@@ -73,6 +76,16 @@ async def process_city(message: types.Message, state: FSMContext):
         f"Возраст: {data['age']}\n"
         f"Город: {data['city']}"
     )
+    try:
+        add_user(
+            telegram_id=message.from_user.id,
+            name=data['name'],
+            age=data['age'],
+            city=data['city']
+        )
+        await message.anwser("Анкета сохранена")
+    except Exception as e:
+        await message.answer("Произошла ошибка при сохранении. Попробуй позже.")
     await state.finish()
 
 
